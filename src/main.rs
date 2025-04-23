@@ -21,42 +21,42 @@ async fn main() {
     db.use_ns("group").use_db("group").await.unwrap();
 
     // insert record with the sdk
-    let _: Vec<Foo> = db.insert("foo").content(foo.clone()).await.unwrap();
+    let _: Vec<Foo> = db.insert("fooBytes").content(foo.clone()).await.unwrap();
 
     // print the result of the sdk query
-    let query = db.query("SELECT * FROM foo").await.unwrap();
+    let query = db.query("SELECT * FROM fooBytes").await.unwrap();
     print!("first query: {:#?}", query);
-
-    // empty the table
-    let _: Vec<Foo> = db.delete("foo").await.unwrap();
 
     // create the table with the literal query with 'u' prefix
     let _ = db
         .query(format!(
-            "CREATE foo SET foo_id = u'{}', name = '{}', age = {}",
+            "CREATE fooUuid SET foo_id = u'{}', name = '{}', age = {}",
             foo.foo_id, foo.name, foo.age
         ))
         .await
         .unwrap();
 
     // print the result of the literal query with 'u' prefix
-    let query = db.query("SELECT * FROM foo").await.unwrap();
+    let query = db.query("SELECT * FROM fooUuid").await.unwrap();
     print!("second query: {:#?}", query);
-
-    // empty the table
-    let _: Vec<Foo> = db.delete("foo").await.unwrap();
 
     // create the table with the literal query without 'u' prefix
     let _ = db
         .query(format!(
-            "CREATE foo SET foo_id = '{}', name = '{}', age = {}",
+            "CREATE fooStrand SET foo_id = '{}', name = '{}', age = {}",
             foo.foo_id, foo.name, foo.age
         ))
         .await
         .unwrap();
 
     // print the result of the literal query without 'u' prefix
-    let query = db.query("SELECT * FROM foo").await.unwrap();
+    let query = db.query("SELECT * FROM fooStrand").await.unwrap();
     print!("third query: {:#?}", query);
 
+    let fooBytes: Vec<Foo> = db.select("fooBytes").await.unwrap();
+
+    let fooUuid: Vec<Foo> = db.select("fooUuid").await.unwrap();
+
+    // this will panic because of: Db(Serialization("failed to deserialize; expected a byte array, found \"01966288-7237-7c03-8275-fc53e0c72590\""))
+    let fooStrand: Vec<Foo> = db.select("fooStrand").await.unwrap();
 }
