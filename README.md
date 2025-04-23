@@ -1,0 +1,2 @@
+# SurrealDB UUID Behavior Project
+This is a basic Rust project designed to demonstrate how SurrealDB behaves differently when handling literal queries versus SDK queries involving record selections containing UUIDs.
